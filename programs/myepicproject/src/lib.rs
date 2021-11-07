@@ -17,8 +17,18 @@ pub mod myepicproject { // module is kinda like a class.
     }
 
     /* Step 6️⃣: Use AddGif Context to grab state from the program */
-    pub fn add_gif(ctx: Context<AddGif>) -> ProgramResult { 
+    /* Step 9️⃣: Add a gif_url param */
+    pub fn add_gif(ctx: Context<AddGif>, gif_url: String) -> ProgramResult { 
         let base_account = &mut ctx.accounts.base_account; // get a mutable reference to the account
+        
+        /* Step 🔟: Build the gif struct */
+        let new_gif = GifStruct {
+            gif_url: gif_url.to_string(),
+            user_address: *base_account.to_account_info().key,
+            timestamp: ctx.timestamp,
+        };
+        // add the new gif to the gif_list vector
+        base_account.gif_list.push(new_gif);
         base_account.total_gifs += 1; // increment total_gifs by 1
         Ok(()) 
     }
@@ -53,6 +63,18 @@ pub struct AddGif<'info> {
 }
 // How does Context work?: "Hey, when someone calls add_gif be sure to attach the AddGif context to it as well so the user can access the base_account and whatever else is attached to AddGif."
 
+/* 
+    Step 7️⃣: Add a custom struct to store a gif url, user_address, & timestamp 
+    - the macro tells Anchor how to serialize/deserialize this struct
+    - All data is stored in accounts. An account is basically a file
+    - we serialize data into binary format before storing, and deserialize data from binary format when we need it.
+*/
+#[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
+pub struct GifStruct {
+    pub gif_url: String,
+    pub user_address: Pubkey,
+    pub timestamp: u64,
+}
 
 /* Step 1️⃣: Define the base account (program state) */
 #[account]
@@ -60,5 +82,7 @@ pub struct AddGif<'info> {
 pub struct BaseAccount {
     // base account has a total_gifs field whitch is an integer
     pub total_gifs: u64,
+    /* Step 8️⃣: Also attach a Vector of type GifStruct to the program account*/
+    pub gif_list: Vec<GifStruct>, // a vector is basically an array
 }
 
