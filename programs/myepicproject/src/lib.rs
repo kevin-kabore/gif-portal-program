@@ -6,10 +6,6 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"); // "program id":  h
 #[program] // lets us call our program from the frontend via fetch request
 pub mod myepicproject { // module is kinda like a class.
     use super::*;
-
-    pub fn start_stuff_off() -> ProgramResult { // a public function that takes a context "StartStuffOff" and returns a ProgramResult.
-        Ok(()) // like a return statement
-    }
     /* Step 3️⃣: In the program, grab the base account (state) from the Context */
     pub fn start_stuff_off(ctx: Context<StartStuffOff>) -> ProgramResult { // a public function that takes a context "StartStuffOff" and returns a ProgramResult.
         
