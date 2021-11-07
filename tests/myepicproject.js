@@ -35,9 +35,9 @@ const main = async () => {
     baseAccount.publicKey,
   )
   console.log('🧾 Program Account: ', programAccount)
-  let gifs = programAccount.totalGifs.toString()
-  console.log('👀 Total gifs:', gifs)
-  if (parseInt(gifs) === 0) {
+  let totalGifs = programAccount.totalGifs.toString()
+  console.log('👀 Total gifs:', totalGifs)
+  if (parseInt(totalGifs) === 0) {
     console.log('✅ Test passed! 🎉')
     console.log('--------------------')
   } else {
@@ -46,7 +46,10 @@ const main = async () => {
   }
 
   console.log('⏳ 2. It adds a gif')
-  await MyEpicProjectProgram.rpc.addGif({
+  console.log('🧾 Program Account Before adding a gif: ', programAccount)
+  let gifUrl =
+    'https://media0.giphy.com/media/NEvPzZ8bd1V4Y/giphy.gif?cid=bb5a1c3afqsy5s4e2yf64q8thitrdyce66uoqy93r1c3vqbp&rid=giphy.gif&ct=g'
+  await MyEpicProjectProgram.rpc.addGif(gifUrl, {
     // AddGif context only accepts baseAccount
     accounts: {
       baseAccount: baseAccount.publicKey,
@@ -56,11 +59,15 @@ const main = async () => {
   programAccount = await MyEpicProjectProgram.account.baseAccount.fetch(
     baseAccount.publicKey,
   )
-  console.log('🧾 Program Account: ', programAccount)
-  gifs = programAccount.totalGifs.toString()
-  console.log('👀 Total gifs:', gifs)
+  totalGifs = programAccount.totalGifs.toString()
+  console.log('👀 Total gifs:', totalGifs)
+  let gifList = programAccount.gifList
+  console.log('👀 GIF List', gifList)
+  console.log('gifList len:', gifList.length)
 
-  if (parseInt(gifs) === 1) {
+  console.log('🧾 Program Account After adding a gif: ', programAccount)
+
+  if (parseInt(totalGifs) === 1) {
     console.log('✅ Test passed! 🎉')
     console.log('--------------------')
   } else {

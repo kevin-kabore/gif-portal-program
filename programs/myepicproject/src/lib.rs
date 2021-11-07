@@ -25,7 +25,6 @@ pub mod myepicproject { // module is kinda like a class.
         let new_gif = GifStruct {
             gif_url: gif_url.to_string(),
             user_address: *base_account.to_account_info().key,
-            timestamp: ctx.timestamp,
         };
         // add the new gif to the gif_list vector
         base_account.gif_list.push(new_gif);
@@ -73,7 +72,6 @@ pub struct AddGif<'info> {
 pub struct GifStruct {
     pub gif_url: String,
     pub user_address: Pubkey,
-    pub timestamp: u64,
 }
 
 /* Step 1️⃣: Define the base account (program state) */
