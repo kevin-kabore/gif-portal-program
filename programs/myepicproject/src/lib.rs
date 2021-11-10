@@ -26,11 +26,28 @@ pub mod myepicproject { // module is kinda like a class.
         let new_gif = GifStruct {
             gif_url: gif_url.to_string(),
             user_address: *base_account.to_account_info().key,
+            votes: 0,
         };
         // add the new gif to the gif_list vector
         base_account.gif_list.push(new_gif);
         base_account.total_gifs += 1; // increment total_gifs by 1
         Ok(()) 
+    }
+
+    pub fn update_gif_votes(ctx: Context<UpdateGifVote>, gif_url: String) -> ProgramResult {
+        let base_account = &mut ctx.accounts.base_account; // get a mutable reference to the account
+        
+        // find the index of the gif_url in the gif_list
+        let gif_index = base_account.gif_list.iter().position(|gif| gif.gif_url == gif_url).unwrap();
+        println!("gif_index {:?}", gif_index);
+        let gif_to_update = &mut base_account.gif_list[gif_index]; // get a mutable reference to the gif_list vector at the gif_index
+        gif_to_update.votes += 1; // increment the votes by 1
+
+        Ok(())
+    }
+
+    pub fn send_sol(ctx: Context<SendSol>, amount: u64) -> ProgramResult {
+       
     }
 }
 
@@ -63,6 +80,22 @@ pub struct AddGif<'info> {
 }
 // How does Context work?: "Hey, when someone calls add_gif be sure to attach the AddGif context to it as well so the user can access the base_account and whatever else is attached to AddGif."
 
+
+#[derive(Accounts)]
+pub struct UpdateGifVote<'info> {
+    #[account(mut)]
+    pub base_account: Account<'info, BaseAccount>,
+}
+
+#[derive(Accounts)]
+pub struct SendSol<'info> {
+    #[account(mut)]
+    from: Signer<'info>,
+    #[account(mut)]
+    to: Account<'info>,
+    system_rogram: Program<'info, System>,
+}
+
 /* 
     Step 7️⃣: Add a custom struct to store a gif url, user_address, & timestamp 
     - the macro tells Anchor how to serialize/deserialize this struct
@@ -73,6 +106,7 @@ pub struct AddGif<'info> {
 pub struct GifStruct {
     pub gif_url: String,
     pub user_address: Pubkey,
+    pub votes: u64,
 }
 
 /* Step 1️⃣: Define the base account (program state) */

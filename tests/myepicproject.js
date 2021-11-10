@@ -28,15 +28,12 @@ const main = async () => {
     },
     signers: [baseAccount],
   })
-  console.log('🧾 Your transaction signature: ', tx)
 
   // Fetch data from the program account.
   let programAccount = await MyEpicProjectProgram.account.baseAccount.fetch(
     baseAccount.publicKey,
   )
-  console.log('🧾 Program Account: ', programAccount)
   let totalGifs = programAccount.totalGifs.toString()
-  console.log('👀 Total gifs:', totalGifs)
   if (parseInt(totalGifs) === 0) {
     console.log('✅ Test passed! 🎉')
     console.log('--------------------')
@@ -46,7 +43,6 @@ const main = async () => {
   }
 
   console.log('⏳ 2. It adds a gif')
-  console.log('🧾 Program Account Before adding a gif: ', programAccount)
   let gifUrl =
     'https://media0.giphy.com/media/NEvPzZ8bd1V4Y/giphy.gif?cid=bb5a1c3afqsy5s4e2yf64q8thitrdyce66uoqy93r1c3vqbp&rid=giphy.gif&ct=g'
   await MyEpicProjectProgram.rpc.addGif(gifUrl, {
@@ -60,14 +56,27 @@ const main = async () => {
     baseAccount.publicKey,
   )
   totalGifs = programAccount.totalGifs.toString()
-  console.log('👀 Total gifs:', totalGifs)
   let gifList = programAccount.gifList
-  console.log('👀 GIF List', gifList)
-  console.log('gifList len:', gifList.length)
-
-  console.log('🧾 Program Account After adding a gif: ', programAccount)
 
   if (parseInt(totalGifs) === 1) {
+    console.log('✅ Test passed! 🎉')
+    console.log('--------------------')
+  } else {
+    console.log('❌ Test failed! 💥')
+    console.log('--------------------')
+  }
+
+  console.log('⏳ 3. It updates the votes of a gif')
+  await MyEpicProjectProgram.rpc.updateGifVotes(gifUrl, {
+    accounts: {
+      baseAccount: baseAccount.publicKey,
+    },
+  })
+  programAccount = await MyEpicProjectProgram.account.baseAccount.fetch(
+    baseAccount.publicKey,
+  )
+  let gifVotes = programAccount.gifList[0].votes
+  if (parseInt(gifVotes) === 1) {
     console.log('✅ Test passed! 🎉')
     console.log('--------------------')
   } else {
